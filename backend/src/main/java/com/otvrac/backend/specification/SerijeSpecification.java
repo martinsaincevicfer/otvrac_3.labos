@@ -29,10 +29,27 @@ public class SerijeSpecification {
                         criteriaBuilder.like(criteriaBuilder.toString(root.join("epizode", JoinType.LEFT).get("ocjena")), "%" + value + "%")
                 );
             } else if (attribute.startsWith("epizode.")) {
+                String epizodeAttribute = attribute.substring(8);
+                if (epizodeAttribute.equals("ocjena") || epizodeAttribute.equals("sezona") || epizodeAttribute.equals("brojEpizode") || epizodeAttribute.equals("trajanje")) {
+                    try {
+                        Double numericValue = Double.parseDouble(value);
+                        return criteriaBuilder.equal(root.join("epizode", JoinType.LEFT).get(epizodeAttribute), numericValue);
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("Invalid numeric format for attribute: " + epizodeAttribute);
+                    }
+                }
                 return criteriaBuilder.like(
-                        root.join("epizode", JoinType.LEFT).get(attribute.substring(8)), "%" + value + "%"
+                        root.join("epizode", JoinType.LEFT).get(epizodeAttribute), "%" + value + "%"
                 );
             } else {
+                if (attribute.equals("ocjena") || attribute.equals("godinaIzlaska")) {
+                    try {
+                        Double numericValue = Double.parseDouble(value);
+                        return criteriaBuilder.equal(root.get(attribute), numericValue);
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("Invalid numeric format for attribute: " + attribute);
+                    }
+                }
                 return criteriaBuilder.like(root.get(attribute), "%" + value + "%");
             }
         };
