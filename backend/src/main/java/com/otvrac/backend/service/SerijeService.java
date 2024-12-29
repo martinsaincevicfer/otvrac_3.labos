@@ -85,38 +85,48 @@ public class SerijeService {
     }
 
     private boolean serijaMatchesFilterForSve(Serije serija, String filter) {
-        return serija.getNaslov().contains(filter) ||
-                (serija.getZanr() != null && serija.getZanr().contains(filter)) ||
-                (serija.getAutor() != null && serija.getAutor().contains(filter)) ||
-                (serija.getMreza() != null && serija.getMreza().contains(filter)) ||
-                (serija.getJezik() != null && serija.getJezik().contains(filter)) ||
-                (serija.getGodinaIzlaska() != null && serija.getGodinaIzlaska().toString().contains(filter)) ||
-                (serija.getOcjena() != null && serija.getOcjena().toString().contains(filter)) ||
-                (serija.getBrojSezona() != null && serija.getBrojSezona().toString().contains(filter));
+        String lowerFilter = filter.toLowerCase(); // Pretvori filter u mala slova
+        return serija.getNaslov().toLowerCase().contains(lowerFilter) ||
+                (serija.getZanr() != null && serija.getZanr().toLowerCase().contains(lowerFilter)) ||
+                (serija.getAutor() != null && serija.getAutor().toLowerCase().contains(lowerFilter)) ||
+                (serija.getMreza() != null && serija.getMreza().toLowerCase().contains(lowerFilter)) ||
+                (serija.getJezik() != null && serija.getJezik().toLowerCase().contains(lowerFilter)) ||
+                (serija.getGodinaIzlaska() != null && serija.getGodinaIzlaska().toString().toLowerCase().contains(lowerFilter)) ||
+                (serija.getOcjena() != null && serija.getOcjena().toString().toLowerCase().contains(lowerFilter)) ||
+                (serija.getBrojSezona() != null && serija.getBrojSezona().toString().toLowerCase().contains(lowerFilter));
     }
 
     private boolean epizodaMatchesFilterForSve(Epizode epizoda, String filter) {
-        return epizoda.getNazivEpizode().contains(filter) ||
-                (epizoda.getScenarist() != null && epizoda.getScenarist().contains(filter)) ||
-                (epizoda.getRedatelj() != null && epizoda.getRedatelj().contains(filter)) ||
-                (epizoda.getSezona() != null && epizoda.getSezona().toString().contains(filter)) ||
-                (epizoda.getBrojEpizode() != null && epizoda.getBrojEpizode().toString().contains(filter)) ||
-                (epizoda.getDatumEmitiranja() != null && epizoda.getDatumEmitiranja().toString().contains(filter)) ||
-                (epizoda.getTrajanje() != null && epizoda.getTrajanje().toString().contains(filter)) ||
-                (epizoda.getOcjena() != null && epizoda.getOcjena().toString().contains(filter));
+        String lowerFilter = filter.toLowerCase(); // Pretvori filter u mala slova
+        return epizoda.getNazivEpizode().toLowerCase().contains(lowerFilter) ||
+                (epizoda.getScenarist() != null && epizoda.getScenarist().toLowerCase().contains(lowerFilter)) ||
+                (epizoda.getRedatelj() != null && epizoda.getRedatelj().toLowerCase().contains(lowerFilter)) ||
+                (epizoda.getSezona() != null && epizoda.getSezona().toString().toLowerCase().contains(lowerFilter)) ||
+                (epizoda.getBrojEpizode() != null && epizoda.getBrojEpizode().toString().toLowerCase().contains(lowerFilter)) ||
+                (epizoda.getDatumEmitiranja() != null && epizoda.getDatumEmitiranja().toString().toLowerCase().contains(lowerFilter)) ||
+                (epizoda.getTrajanje() != null && epizoda.getTrajanje().toString().toLowerCase().contains(lowerFilter)) ||
+                (epizoda.getOcjena() != null && epizoda.getOcjena().toString().toLowerCase().contains(lowerFilter));
     }
 
     private boolean epizodaMatchesFilter(Epizode epizoda, String attribute, String value) {
+        String lowerValue = value.toLowerCase(); // Pretvori vrijednost u mala slova
         return switch (attribute) {
-            case "epizode.nazivEpizode" -> epizoda.getNazivEpizode().contains(value);
-            case "epizode.scenarist" -> epizoda.getScenarist().contains(value);
-            case "epizode.redatelj" -> epizoda.getRedatelj().contains(value);
-            case "epizode.sezona" -> epizoda.getSezona() != null && epizoda.getSezona().toString().contains(value);
-            case "epizode.brojEpizode" -> epizoda.getBrojEpizode() != null && epizoda.getBrojEpizode().toString().contains(value);
-            case "epizode.datumEmitiranja" -> epizoda.getDatumEmitiranja() != null && epizoda.getDatumEmitiranja().toString().contains(value);
-            case "epizode.trajanje" -> epizoda.getTrajanje() != null && epizoda.getTrajanje().toString().contains(value);
-            case "epizode.ocjena" -> epizoda.getOcjena() != null && epizoda.getOcjena().toString().contains(value);
+            case "epizode.nazivEpizode" -> epizoda.getNazivEpizode().toLowerCase().contains(lowerValue);
+            case "epizode.scenarist" -> epizoda.getScenarist().toLowerCase().contains(lowerValue);
+            case "epizode.redatelj" -> epizoda.getRedatelj().toLowerCase().contains(lowerValue);
+            case "epizode.sezona" -> epizoda.getSezona() != null && epizoda.getSezona().toString().toLowerCase().contains(lowerValue);
+            case "epizode.brojEpizode" -> epizoda.getBrojEpizode() != null && epizoda.getBrojEpizode().toString().toLowerCase().contains(lowerValue);
+            case "epizode.datumEmitiranja" -> epizoda.getDatumEmitiranja() != null && epizoda.getDatumEmitiranja().toString().toLowerCase().contains(lowerValue);
+            case "epizode.trajanje" -> epizoda.getTrajanje() != null && epizoda.getTrajanje().toString().toLowerCase().contains(lowerValue);
+            case "epizode.ocjena" -> epizoda.getOcjena() != null && epizoda.getOcjena().toString().toLowerCase().contains(lowerValue);
             default -> false;
         };
+    }
+
+    public List<Serije> search(String filter, String attribute) {
+        if (attribute != null && filter != null) {
+            return getSerijeWithFilteredAttributes(attribute, filter);
+        }
+        return getAllSerije();
     }
 }

@@ -1,0 +1,64 @@
+### GET serije
+GET http://localhost:8080/api/serije
+
+### GET serije/{id}
+GET http://localhost:8080/api/serije/1
+
+### GET serije/search?attribute={attribute}&filter={filter}
+GET http://localhost:8080/api/serije/search?attribute=epizode.nazivEpizode&filter=pilot
+
+### POST serije/create
+POST http://localhost:8080/api/serije/create
+Content-Type: application/json
+
+{
+  "naslov": "Test",
+  "zanr": "Drama",
+  "godinaIzlaska": 2008,
+  "ocjena": 9.5,
+  "brojSezona": 5,
+  "jezik": "Engleski",
+  "autor": "Vince Gilligan",
+  "mreza": "AMC",
+  "epizode": []
+}
+
+### PUT serije/{id}
+PUT http://localhost:8080/api/serije/11
+Content-Type: application/json
+
+{
+  "naslov": "Test",
+  "zanr": "Drama",
+  "godinaIzlaska": 2008,
+  "ocjena": 9.3,
+  "brojSezona": 5,
+  "jezik": "Engleski",
+  "autor": "Vince Gilligan",
+  "mreza": "AMC",
+  "epizode": []
+}
+
+### DELETE serije/{id}
+DELETE http://localhost:8080/api/serije/11
+
+### GET epizode
+GET http://localhost:8080/api/epizode
+
+### GET epizode/{id}
+GET http://localhost:8080/api/epizode/1
+
+### GET epizode/serija/{serijaId}
+GET http://localhost:8080/api/epizode/serija/1
+
+### GET download/{filename}
+GET http://localhost:8080/download/serije.json
+
+### GET serije/download/json
+GET http://localhost:8080/api/serije/download/json?attribute=epizode.nazivEpizode&filter=Pilot
+
+### GET serije/download/csv
+GET http://localhost:8080/api/serije/download/csv?attribute=epizode.nazivEpizode&filter=Pilot
+
+### Test exceptiona
+PATCH http://localhost:8080/nesto
