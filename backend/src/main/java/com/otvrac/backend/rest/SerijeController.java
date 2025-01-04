@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.otvrac.backend.domain.Epizode;
 import com.otvrac.backend.domain.Serije;
 import com.otvrac.backend.service.SerijeService;
+import com.otvrac.backend.wrapper.Link;
 import com.otvrac.backend.wrapper.ResponseWrapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/serije")
@@ -32,26 +36,99 @@ public class SerijeController {
     @GetMapping
     public ResponseEntity<?> getAllSerije() {
         List<Serije> serije = serijeService.getAllSerije();
-        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched whole database", serije));
+
+        List<Object> serijeWithLinks = Collections.singletonList(serije.stream()
+                .map(serija -> {
+                    List<Link> links = List.of(
+                            new Link("/api/serije/" + serija.getId(), "self", "GET"),
+                            new Link("/api/serije/" + serija.getId() + "/epizode", "epizode", "GET")
+                    );
+                    ResponseWrapper response = new ResponseWrapper("OK", "Fetched serija", serija);
+                    response.setLinks(links);
+                    return response;
+                })
+                .toList());
+
+        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched whole database", serijeWithLinks));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getSerijaById(@PathVariable Integer id) {
-        return serijeService.getSerijaById(id)
-                .map(serija -> ResponseEntity.ok(new ResponseWrapper("OK", "Fetched serija with ID: " + id, serija)))
-                .orElse(ResponseEntity.status(404).body(new ResponseWrapper("Not Found", "Serija with ID: " + id + " not found", null)));
+        if (id <= 0) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseWrapper("Bad Request", "Invalid ID: ID must be a positive integer", null));
+        }
+
+        Serije serija = serijeService.getSerijaById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Serija with ID " + id + " not found"));
+
+        List<Link> links = List.of(
+                new Link("/api/serije/" + id, "self", "GET"),
+                new Link("/api/serije/" + id + "/epizode", "epizode", "GET"),
+                new Link("/api/serije/" + id, "update", "PUT"),
+                new Link("/api/serije/" + id, "delete", "DELETE")
+        );
+
+        ResponseWrapper response = new ResponseWrapper("OK", "Fetched serija with ID: " + id, serija);
+        response.setLinks(links);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/epizode")
+    public ResponseEntity<?> getEpizodeBySerijaId(@PathVariable Integer id) {
+        if (id <= 0) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseWrapper("Bad Request", "Invalid ID: ID must be a positive integer", null));
+        }
+
+        Serije serija = serijeService.getSerijaById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Serija with ID " + id + " not found"));
+
+        List<Epizode> epizode = serija.getEpizode();
+
+        List<Object> epizodeWithLinks = Collections.singletonList(epizode.stream()
+                .map(epizoda -> {
+                    List<Link> links = List.of(
+                            new Link("/api/epizode/" + epizoda.getId(), "self", "GET"),
+                            new Link("/api/serije/" + id, "serija", "GET"),
+                            new Link("/api/epizode/" + epizoda.getId(), "delete", "DELETE")
+                    );
+                    ResponseWrapper response = new ResponseWrapper("OK", "Epizoda details", epizoda);
+                    response.setLinks(links);
+                    return response;
+                })
+                .toList());
+
+        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched epizode for serija ID: " + id, epizodeWithLinks));
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createSerija(@RequestBody Serije serija) {
         Serije novaSerija = serijeService.createSerija(serija);
-        return ResponseEntity.status(201).body(new ResponseWrapper("Created", "New serija created successfully", novaSerija));
+
+        List<Link> links = List.of(
+                new Link("/api/serije/" + novaSerija.getId(), "self", "GET"),
+                new Link("/api/serije/" + novaSerija.getId(), "update", "PUT"),
+                new Link("/api/serije/" + novaSerija.getId(), "delete", "DELETE")
+        );
+
+        ResponseWrapper response = new ResponseWrapper("Created", "New serija created successfully", novaSerija);
+        response.setLinks(links);
+        return ResponseEntity.status(201).body(response);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateSerija(@PathVariable Integer id, @RequestBody Serije updatedSerija) {
         Serije serija = serijeService.updateSerija(id, updatedSerija);
-        return ResponseEntity.ok(new ResponseWrapper("OK", "Serija updated successfully", serija));
+
+        List<Link> links = List.of(
+                new Link("/api/serije/" + id, "self", "GET"),
+                new Link("/api/serije/" + id, "delete", "DELETE")
+        );
+
+        ResponseWrapper response = new ResponseWrapper("OK", "Serija updated successfully", serija);
+        response.setLinks(links);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
@@ -64,13 +141,24 @@ public class SerijeController {
     public ResponseEntity<?> getSerijeWithCombinedFilter(
             @RequestParam(required = false, defaultValue = "sve") String attribute,
             @RequestParam(required = false, defaultValue = "") String filter) {
-        if (filter == null || filter.trim().isEmpty()) {
-            List<Serije> serije = serijeService.getAllSerije();
-            return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched all series due to empty filter", serije));
-        }
 
-        List<Serije> serije = serijeService.getSerijeWithFilteredAttributes(attribute, filter);
-        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched filtered results", serije));
+        List<Serije> serije = filter == null || filter.trim().isEmpty()
+                ? serijeService.getAllSerije()
+                : serijeService.getSerijeWithFilteredAttributes(attribute, filter);
+
+        List<Object> serijeWithLinks = Collections.singletonList(serije.stream()
+                .map(serija -> {
+                    List<Link> links = List.of(
+                            new Link("/api/serije/" + serija.getId(), "self", "GET"),
+                            new Link("/api/serije/" + serija.getId() + "/epizode", "epizode", "GET")
+                    );
+                    ResponseWrapper response = new ResponseWrapper("OK", "Serija details", serija);
+                    response.setLinks(links);
+                    return response;
+                })
+                .toList());
+
+        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched filtered results", serijeWithLinks));
     }
 
     @GetMapping("/download/json")

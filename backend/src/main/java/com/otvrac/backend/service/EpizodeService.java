@@ -2,6 +2,7 @@ package com.otvrac.backend.service;
 
 import com.otvrac.backend.dao.EpizodeRepository;
 import com.otvrac.backend.domain.Epizode;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +25,5 @@ public class EpizodeService {
 
     public Optional<Epizode> getEpizodaById(Integer id) {
         return epizodeRepository.findById(id);
-    }
-
-    public List<Epizode> getEpizodeBySerijaId(Integer serijaId) {
-        return epizodeRepository.findBySerijaId(serijaId);
     }
 }

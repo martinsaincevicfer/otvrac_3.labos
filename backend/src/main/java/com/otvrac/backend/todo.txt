@@ -1,0 +1,4 @@
+- vidjeti ocu mozda radije napraviti jos dvije get metode u serije
+- jos jednom testirati search i downloadanje fileova
+- testirati exceptions
+- openapi specifikacija
