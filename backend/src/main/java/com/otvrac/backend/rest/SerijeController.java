@@ -64,9 +64,12 @@ public class SerijeController {
     public ResponseEntity<?> getSerijeWithCombinedFilter(
             @RequestParam(required = false, defaultValue = "sve") String attribute,
             @RequestParam(required = false, defaultValue = "") String filter) {
-        List<Serije> serije = attribute != null && filter != null
-                ? serijeService.getSerijeWithFilteredAttributes(attribute, filter)
-                : serijeService.getAllSerije();
+        if (filter == null || filter.trim().isEmpty()) {
+            List<Serije> serije = serijeService.getAllSerije();
+            return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched all series due to empty filter", serije));
+        }
+
+        List<Serije> serije = serijeService.getSerijeWithFilteredAttributes(attribute, filter);
         return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched filtered results", serije));
     }
 

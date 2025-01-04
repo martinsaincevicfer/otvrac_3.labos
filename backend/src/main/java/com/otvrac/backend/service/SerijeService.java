@@ -103,7 +103,7 @@ public class SerijeService {
                 (epizoda.getRedatelj() != null && epizoda.getRedatelj().toLowerCase().contains(lowerFilter)) ||
                 (epizoda.getSezona() != null && epizoda.getSezona().toString().toLowerCase().contains(lowerFilter)) ||
                 (epizoda.getBrojEpizode() != null && epizoda.getBrojEpizode().toString().toLowerCase().contains(lowerFilter)) ||
-                (epizoda.getDatumEmitiranja() != null && epizoda.getDatumEmitiranja().toString().toLowerCase().contains(lowerFilter)) ||
+                (epizoda.getDatumEmitiranja() != null && epizoda.getDatumEmitiranja().toString().contains(lowerFilter)) ||
                 (epizoda.getTrajanje() != null && epizoda.getTrajanje().toString().toLowerCase().contains(lowerFilter)) ||
                 (epizoda.getOcjena() != null && epizoda.getOcjena().toString().toLowerCase().contains(lowerFilter));
     }
@@ -124,9 +124,10 @@ public class SerijeService {
     }
 
     public List<Serije> search(String filter, String attribute) {
-        if (attribute != null && filter != null) {
-            return getSerijeWithFilteredAttributes(attribute, filter);
+        System.out.println(filter);
+        if (attribute != null && (filter == null || filter.trim().isEmpty())) {
+            return getAllSerije();
         }
-        return getAllSerije();
+        return getSerijeWithFilteredAttributes(attribute, filter);
     }
 }
