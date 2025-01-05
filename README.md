@@ -49,7 +49,7 @@ serije, epizode, televizija, zabava, analiza
 
 ## Datum objave
 
-11.11.2024
+5.1.2025
 
 ## Frekvencija ažuriranja
 
