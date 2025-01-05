@@ -1,0 +1,318 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Serije i Epizode API",
+    "description": "API za upravljanje serijama i epizodama.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Martin Šainčević",
+      "email": "martin.saincevic@unizg.fer.hr",
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "paths": {
+    "/api/serije": {
+      "get": {
+        "summary": "Dohvati sve serije",
+        "description": "Vraća listu svih serija.",
+        "responses": {
+          "200": {
+            "description": "Lista serija.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Serije"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/serije/{id}": {
+      "get": {
+        "summary": "Dohvati seriju po ID-u",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID serije",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Serija s traženim ID-om.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Serije"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Serija nije pronađena."
+          }
+        }
+      },
+      "put": {
+        "summary": "Ažuriraj seriju",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID serije",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Serije"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Serija uspješno ažurirana.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Serije"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Obriši seriju",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID serije",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Serija uspješno obrisana."
+          }
+        }
+      },
+      "post": {
+        "summary": "Kreiraj novu seriju",
+        "description": "Dodaje novu seriju u bazu podataka.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Serije"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Serija uspješno kreirana.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Serije"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/serije/{id}/epizode": {
+      "get": {
+        "summary": "Dohvati epizode serije",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID serije",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista epizoda serije.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Epizode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/epizode": {
+      "get": {
+        "summary": "Dohvati sve epizode",
+        "description": "Vraća listu svih epizoda.",
+        "responses": {
+          "200": {
+            "description": "Lista epizoda.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Epizode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/epizode/{id}": {
+      "get": {
+        "summary": "Dohvati epizodu po ID-u",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID epizode",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Epizoda s traženim ID-om.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Epizode"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Epizoda nije pronađena."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Serije": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "naslov": {
+            "type": "string"
+          },
+          "zanr": {
+            "type": "string"
+          },
+          "godinaIzlaska": {
+            "type": "integer"
+          },
+          "ocjena": {
+            "type": "number",
+            "format": "float"
+          },
+          "brojSezona": {
+            "type": "integer"
+          },
+          "jezik": {
+            "type": "string"
+          },
+          "autor": {
+            "type": "string"
+          },
+          "mreza": {
+            "type": "string"
+          },
+          "epizode": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Epizode"
+            }
+          }
+        }
+      },
+      "Epizode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nazivEpizode": {
+            "type": "string"
+          },
+          "sezona": {
+            "type": "integer"
+          },
+          "brojEpizode": {
+            "type": "integer"
+          },
+          "datumEmitiranja": {
+            "type": "string",
+            "format": "date"
+          },
+          "trajanje": {
+            "type": "integer"
+          },
+          "ocjena": {
+            "type": "number",
+            "format": "float"
+          },
+          "scenarist": {
+            "type": "string"
+          },
+          "redatelj": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
