@@ -86,20 +86,7 @@ public class SerijeController {
 
         List<Epizode> epizode = serija.getEpizode();
 
-        List<Object> epizodeWithLinks = Collections.singletonList(epizode.stream()
-                .map(epizoda -> {
-                    List<Link> links = List.of(
-                            new Link("/api/epizode/" + epizoda.getId(), "self", "GET"),
-                            new Link("/api/serije/" + id, "serija", "GET"),
-                            new Link("/api/epizode/" + epizoda.getId(), "delete", "DELETE")
-                    );
-                    ResponseWrapper response = new ResponseWrapper("OK", "Epizoda details", epizoda);
-                    response.setLinks(links);
-                    return response;
-                })
-                .toList());
-
-        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched epizode for serija ID: " + id, epizodeWithLinks));
+        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched epizode for serija ID: " + id, epizode));
     }
 
     @PostMapping("/create")
@@ -146,19 +133,7 @@ public class SerijeController {
                 ? serijeService.getAllSerije()
                 : serijeService.getSerijeWithFilteredAttributes(attribute, filter);
 
-        List<Object> serijeWithLinks = Collections.singletonList(serije.stream()
-                .map(serija -> {
-                    List<Link> links = List.of(
-                            new Link("/api/serije/" + serija.getId(), "self", "GET"),
-                            new Link("/api/serije/" + serija.getId() + "/epizode", "epizode", "GET")
-                    );
-                    ResponseWrapper response = new ResponseWrapper("OK", "Serija details", serija);
-                    response.setLinks(links);
-                    return response;
-                })
-                .toList());
-
-        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched filtered results", serijeWithLinks));
+        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched filtered results", serije));
     }
 
     @GetMapping("/download/json")

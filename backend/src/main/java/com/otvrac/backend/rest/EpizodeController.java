@@ -27,19 +27,7 @@ public class EpizodeController {
     public ResponseEntity<?> getAllEpizode() {
         List<Epizode> epizode = epizodeService.getAllEpizode();
 
-        List<Object> epizodeWithLinks = Collections.singletonList(epizode.stream()
-                .map(epizoda -> {
-                    List<Link> links = List.of(
-                            new Link("/api/epizode/" + epizoda.getId(), "self", "GET"),
-                            new Link("/api/serije/" + epizoda.getSerija().getId(), "serija", "GET")
-                    );
-                    ResponseWrapper response = new ResponseWrapper("OK", "Fetched epizoda", epizoda);
-                    response.setLinks(links);
-                    return response;
-                })
-                .toList());
-
-        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched all epizode", epizodeWithLinks));
+        return ResponseEntity.ok(new ResponseWrapper("OK", "Fetched all epizode", epizode));
     }
 
     @GetMapping("/{id}")

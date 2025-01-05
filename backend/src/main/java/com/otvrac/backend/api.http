@@ -20,18 +20,27 @@ Content-Type: application/json
   "jezik": "Engleski",
   "autor": "Vince Gilligan",
   "mreza": "AMC",
-  "epizode": []
+  "epizode": [{
+    "nazivEpizode": "Testnoime",
+    "sezona": 3,
+    "brojEpizode": 5,
+    "datumEmitiranja": "2008-01-20",
+    "trajanje": 58,
+    "ocjena": 9.2,
+    "scenarist": "Vince Gilligan",
+    "redatelj": "Vince Gilligan"
+  }]
 }
 
 ### PUT serije/{id}
-PUT http://localhost:8080/api/serije/11
+PUT http://localhost:8080/api/serije/14
 Content-Type: application/json
 
 {
-  "naslov": "Test",
+  "naslov": "Testic",
   "zanr": "Drama",
   "godinaIzlaska": 2008,
-  "ocjena": 9.3,
+  "ocjena": 9.5,
   "brojSezona": 5,
   "jezik": "Engleski",
   "autor": "Vince Gilligan",
@@ -42,14 +51,14 @@ Content-Type: application/json
 ### DELETE serije/{id}
 DELETE http://localhost:8080/api/serije/11
 
+### GET serije/{id}/epizode
+GET http://localhost:8080/api/serije/1/epizode
+
 ### GET epizode
 GET http://localhost:8080/api/epizode
 
 ### GET epizode/{id}
 GET http://localhost:8080/api/epizode/1
-
-### GET epizode/serija/{serijaId}
-GET http://localhost:8080/api/epizode/serija/1
 
 ### GET download/{filename}
 GET http://localhost:8080/download/serije.json
@@ -60,5 +69,5 @@ GET http://localhost:8080/api/serije/download/json?attribute=epizode.nazivEpizod
 ### GET serije/download/csv
 GET http://localhost:8080/api/serije/download/csv?attribute=epizode.nazivEpizode&filter=Pilot
 
-### Test exceptiona
-PATCH http://localhost:8080/nesto
+### GET openapi
+GET http://localhost:8080/openapi

@@ -28,7 +28,9 @@ public class SerijeSpecification {
                                 lowerValue
                         ),
                         criteriaBuilder.like(criteriaBuilder.toString(root.join("epizode").get("trajanje")), lowerValue),
-                        criteriaBuilder.like(criteriaBuilder.toString(root.join("epizode").get("ocjena")), lowerValue)
+                        criteriaBuilder.like(criteriaBuilder.toString(root.join("epizode").get("ocjena")), lowerValue),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.join("epizode").get("scenarist")), lowerValue),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.join("epizode").get("redatelj")), lowerValue)
                 );
             } else if (attribute.startsWith("epizode.")) {
                 String epizodeAttribute = attribute.substring(8);

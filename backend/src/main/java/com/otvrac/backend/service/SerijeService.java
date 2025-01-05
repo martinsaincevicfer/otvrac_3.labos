@@ -5,6 +5,7 @@ import com.otvrac.backend.dao.SerijeRepository;
 import com.otvrac.backend.domain.Epizode;
 import com.otvrac.backend.domain.Serije;
 import com.otvrac.backend.specification.SerijeSpecification;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,8 @@ public class SerijeService {
 
     public Serije updateSerija(Integer id, Serije updatedSerija) {
         Serije existingSerija = serijeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Serija nije pronađena"));
+                .orElseThrow(() -> new EntityNotFoundException("Serija with ID " + id + " not found"));
+
         existingSerija.setNaslov(updatedSerija.getNaslov());
         existingSerija.setZanr(updatedSerija.getZanr());
         existingSerija.setGodinaIzlaska(updatedSerija.getGodinaIzlaska());
@@ -53,7 +55,9 @@ public class SerijeService {
     }
 
     public void deleteSerija(Integer id) {
-        serijeRepository.deleteById(id);
+        Serije serija = serijeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Serija with ID " + id + " not found"));
+        serijeRepository.delete(serija);
     }
 
     public List<Serije> getFilteredSerije(Specification<Serije> spec) {
